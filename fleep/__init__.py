@@ -69,17 +69,20 @@ def get(obj):
 
     stream = " ".join(['{:02X}'.format(byte) for byte in obj])
 
+    all = []
+
     for element in data:
         for signature in element["signature"]:
             offset = element["offset"] * 2 + element["offset"]
             if signature == stream[offset:len(signature) + offset]:
+                all.append(element)
                 for key in ["type", "extension", "mime"]:
                     info[key][element[key]] = len(signature)
 
     for key in ["type", "extension", "mime"]:
         info[key] = [element for element in sorted(info[key], key=info[key].get, reverse=True)]
 
-    return Info(info["type"], info["extension"], info["mime"])
+    return Info(info["type"], info["extension"], info["mime"]), all
 
 
 def supported_types():
